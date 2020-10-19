@@ -42,7 +42,7 @@ private enum OSPlatform: Equatable {
 // MARK: - Package
 
 let package = Package(
-    name: "OpenSSL",
+    name: "SwiftOpenSSL",
     platforms: [
         .iOS(.v10),
         .macOS(.v10_13),
@@ -50,8 +50,8 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
-            name: "OpenSSL",
-            targets: ["OpenSSL"]),
+            name: "SwiftOpenSSL",
+            targets: ["SwiftOpenSSL"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -62,7 +62,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         when(OSPlatform.current == .linux, use: [
             .systemLibrary(
-                name: "OpenSSL",
+                name: "SwiftOpenSSL",
                 pkgConfig: "openssl",
                 providers: [
                     .apt(["openssl libssl-dev"]),
@@ -71,7 +71,7 @@ let package = Package(
         ]),
         when(OSPlatform.current == .darwin, use: [
             .binaryTarget(
-                name: "OpenSSL",
+                name: "SwiftOpenSSL",
                 path: "Sources/Framework/OpenSSL.xcframework"
             )
         ]),
