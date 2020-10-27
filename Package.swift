@@ -38,6 +38,29 @@ private enum OSPlatform: Equatable {
     #endif
 }
 
+// MARK: - collection
+
+let packageTargets: [Target] = ruleSets([
+    // Targets are the basic building blocks of a package. A target can define a module or a test suite.
+    // Targets can depend on other targets in this package, and on products in packages this package depends on.
+    
+    when(OSPlatform.current == .linux, use: [
+        .systemLibrary(
+            name: "OpenSSL",
+            pkgConfig: "openssl",
+            providers: [
+                .apt(["openssl libssl-dev"]),
+            ]
+        ),
+    ]),
+    when(OSPlatform.current == .darwin, use: [
+        .binaryTarget(
+            name: "OpenSSL",
+            path: "artifacts/OpenSSL.xcframework"
+        )
+    ]),
+])
+
 
 // MARK: - Package
 
@@ -51,29 +74,11 @@ let package = Package(
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "SwiftOpenSSL",
-            targets: ["SwiftOpenSSL"]),
+            targets: ["OpenSSL"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
     ],
-    targets: ruleSets([
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
-        when(OSPlatform.current == .linux, use: [
-            .systemLibrary(
-                name: "SwiftOpenSSL",
-                pkgConfig: "openssl",
-                providers: [
-                    .apt(["openssl libssl-dev"]),
-                ]
-            ),
-        ]),
-        when(OSPlatform.current == .darwin, use: [
-            .binaryTarget(
-                name: "SwiftOpenSSL",
-                path: "Sources/Framework/OpenSSL.xcframework"
-            )
-        ]),
-    ])
+    targets: packageTargets
 )
